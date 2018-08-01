@@ -5,4 +5,6 @@
 .DS_Store
 /org
 /tmp
+/db
 secret
+/src/main/resources/account.properties
