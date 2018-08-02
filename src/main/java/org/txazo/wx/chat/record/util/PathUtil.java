@@ -2,18 +2,18 @@ package org.txazo.wx.chat.record.util;
 
 import java.io.InputStream;
 
-public class ProjectPathUtil {
+public class PathUtil {
 
     public static InputStream getResourceAsStream(String name) {
-        return ProjectPathUtil.class.getResourceAsStream(name);
+        return PathUtil.class.getResourceAsStream(name);
     }
 
     public static String getClassPath() {
-        return ProjectPathUtil.class.getResource("/").getPath();
+        return PathUtil.class.getResource("/").getPath();
     }
 
     public static String getProjectPath() {
-        return getClassPath().replace("/target/classes/", "");
+        return getClassPath().replace("/target/classes/", "").replace("/target/classes", "");
     }
 
     public static String getDBImagePath() {
@@ -34,6 +34,10 @@ public class ProjectPathUtil {
 
     public static String getDBRecordMetaPath() {
         return getDBRecordPath() + "/meta.data";
+    }
+
+    public static String getDBRecordChatPath() {
+        return getDBRecordPath() + "/chat/";
     }
 
 }

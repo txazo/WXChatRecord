@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.txazo.wx.chat.record.bean.MailContent;
 import org.txazo.wx.chat.record.util.FileUtil;
-import org.txazo.wx.chat.record.util.ProjectPathUtil;
+import org.txazo.wx.chat.record.util.PathUtil;
 
 import javax.mail.*;
 import java.io.*;
@@ -28,8 +28,8 @@ public class MailReceiver {
 
     private static void init() {
         try {
-            emailProps.load(new InputStreamReader(ProjectPathUtil.getResourceAsStream("/mail.properties"), "UTF-8"));
-            accountProps.load(new InputStreamReader(ProjectPathUtil.getResourceAsStream("/account.properties"), "UTF-8"));
+            emailProps.load(new InputStreamReader(PathUtil.getResourceAsStream("/mail.properties"), "UTF-8"));
+            accountProps.load(new InputStreamReader(PathUtil.getResourceAsStream("/account.properties"), "UTF-8"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +100,7 @@ public class MailReceiver {
             IOUtils.copy(part.getInputStream(), baos);
             byte[] byteArray = baos.toByteArray();
             String md5 = DigestUtils.md5Hex(byteArray);
-            File imageFile = new File(ProjectPathUtil.getDBImagePath() + md5 + ".png");
+            File imageFile = new File(PathUtil.getDBImagePath() + md5 + ".png");
             if (!imageFile.exists()) {
                 FileUtils.copyInputStreamToFile(new ByteArrayInputStream(byteArray), imageFile);
             }
@@ -109,16 +109,16 @@ public class MailReceiver {
     }
 
     private static void storage(MailContent content) throws Exception {
-        FileUtil.writeFile(content.getText(), ProjectPathUtil.getDBRecordTextPath() + content.getId());
-        FileUtil.writeFile(content.getHtml(), ProjectPathUtil.getDBRecordHtmlPath() + content.getId());
-        String text = FileUtils.readFileToString(new File(ProjectPathUtil.getDBRecordMetaPath()), "UTF-8");
+        FileUtil.writeFile(content.getText(), PathUtil.getDBRecordTextPath() + content.getId());
+        FileUtil.writeFile(content.getHtml(), PathUtil.getDBRecordHtmlPath() + content.getId());
+        String text = FileUtils.readFileToString(new File(PathUtil.getDBRecordMetaPath()), "UTF-8");
         Set<MailContent> contents = new HashSet<>();
         if (StringUtils.isNotBlank(text)) {
             contents.addAll(JSON.parseArray(text, MailContent.class));
         }
         if (!contents.contains(content)) {
             contents.add(content);
-            FileUtil.writeFile(JSON.toJSONString(contents, SerializerFeature.PrettyFormat), ProjectPathUtil.getDBRecordMetaPath());
+            FileUtil.writeFile(JSON.toJSONString(contents, SerializerFeature.PrettyFormat), PathUtil.getDBRecordMetaPath());
         }
     }
 
