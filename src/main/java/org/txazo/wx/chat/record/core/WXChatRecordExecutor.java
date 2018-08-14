@@ -10,7 +10,7 @@ public class WXChatRecordExecutor {
 
     public static void execute() throws Exception {
         init();
-//        MailReceiver.execute();
+        MailReceiver.execute();
         RecordParser.execute();
     }
 

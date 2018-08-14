@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 import org.txazo.wx.chat.record.bean.MailContent;
 import org.txazo.wx.chat.record.bean.Record;
 import org.txazo.wx.chat.record.bean.RecordPack;
+import org.txazo.wx.chat.record.format.RecordFormatter;
 import org.txazo.wx.chat.record.util.PathUtil;
 
 import java.io.File;
@@ -48,6 +49,7 @@ public class RecordParser {
             List<Record> records = entry.getValue();
             Collections.sort(records);
             FileUtils.writeLines(new File(PathUtil.getDBRecordChatPath() + entry.getKey()), records);
+            RecordFormatter.format(entry.getKey(), records);
         }
     }
 

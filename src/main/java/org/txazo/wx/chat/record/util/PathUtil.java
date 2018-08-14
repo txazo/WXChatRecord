@@ -40,4 +40,8 @@ public class PathUtil {
         return getDBRecordPath() + "/chat/";
     }
 
+    public static String getFormatPath() {
+        return "/Users/txazo/Txazoc/txazoc.github.io/chat";
+    }
+
 }
