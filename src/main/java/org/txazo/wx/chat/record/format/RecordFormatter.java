@@ -7,7 +7,6 @@ import org.txazo.wx.chat.record.util.PathUtil;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 
 public class RecordFormatter {
@@ -24,7 +23,7 @@ public class RecordFormatter {
         }
     }
 
-    public static void format(String date, List<Record> records) throws IOException {
+    public static void format(String date, List<Record> records) throws Exception {
         File file = new File(PathUtil.getFormatPath() + "/" + date + ".md");
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
         bw.write("---");
@@ -38,13 +37,37 @@ public class RecordFormatter {
         bw.newLine();
         bw.write("<div class=\"chat\">");
         bw.write("<ul>");
+
+        int lastHour = -1;
+        int currentLoopMinute = -1;
         for (Record c : records) {
+            boolean showTime = false;
+            int hour = getHour(c.getTime());
+            int minute = getMinute(c.getTime());
+
+            if (lastHour == -1) {
+                showTime = true;
+                lastHour = hour;
+                currentLoopMinute = minute;
+            }
+
+            if (hour != lastHour) {
+                showTime = true;
+                currentLoopMinute = -1;
+            } else if (minute - currentLoopMinute >= 5) {
+                showTime = true;
+                currentLoopMinute = minute;
+            }
+
             bw.write("<li>");
-            bw.write("<div class=\"chat_time\"><span>" + c.getTime() + "</span></div>");
+            if (showTime) {
+                bw.write("<div class=\"chat_time\"><span>" + c.getTime() + "</span></div>");
+            }
             bw.write((c.getType() == 2 ? CHAT_LEFT_TEMPLATE : CHAT_RIGHT_TEMPLATE)
                     .replace("${nickName}", c.getSender()).replace("${message}", c.getMessage()));
-            bw.write("<div style=\"clear: both\"/>");
             bw.write("</li>");
+
+            lastHour = hour;
         }
         bw.newLine();
         bw.write("</ul>");
@@ -52,6 +75,16 @@ public class RecordFormatter {
         bw.write("</div>");
         bw.newLine();
         bw.close();
+    }
+
+    private static int getHour(String time) {
+        String hourStr = time.substring(time.length() - 5, time.length() - 3);
+        return hourStr.startsWith("0") ? Integer.parseInt(hourStr.substring(1)) : Integer.parseInt(hourStr);
+    }
+
+    private static int getMinute(String time) {
+        String minuteStr = time.substring(time.length() - 2, time.length());
+        return minuteStr.startsWith("0") ? Integer.parseInt(minuteStr.substring(1)) : Integer.parseInt(minuteStr);
     }
 
 }
